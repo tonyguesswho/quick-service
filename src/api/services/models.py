@@ -1,21 +1,15 @@
 import os
-from sqlalchemy.sql import func
 
 
 from src import db
+from src.database.models import BaseModel
 
 
-class Service(db.Model):
+class Service(BaseModel):
 
     __tablename__ = "services"
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(128), nullable=False, unique=True)
     duration = db.Column(db.Float, nullable=False)
-    created_date = db.Column(db.DateTime, default=func.now(), nullable=False)
-    updated_date = db.Column(
-        db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now()
-    )
 
     def __init__(self, name, duration):
         self.name = name

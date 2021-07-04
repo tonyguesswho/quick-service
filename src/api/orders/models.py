@@ -1,29 +1,23 @@
 import os
-from sqlalchemy.sql import func
 from src.api.services.models import Service
+from src.database.models import BaseModel
 
 
 from src import db
 
 
-class Order(db.Model):
+class Order(BaseModel):
 
     __tablename__ = "orders"
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     service_id = db.Column(db.Integer, db.ForeignKey(Service.id), nullable=False)
     customer_id = db.Column(db.String(128), nullable=False)
-    created_date = db.Column(
-        db.DateTime, default=func.now(), index=True, nullable=False
-    )
-    updated_date = db.Column(
-        db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now()
-    )
+    request_date = db.Column(db.DateTime, index=True, nullable=False)
     service = db.relationship(Service, backref="orders")
 
-    def __init__(self, service_id, customer_id):
+    def __init__(self, service_id, customer_id, request_date):
         self.service_id = service_id
         self.customer_id = customer_id
+        self.request_date = request_date
 
     def __repr__(self):
         return "<Order %r>" % self.customer_id

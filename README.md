@@ -12,3 +12,8 @@ $ docker-compose exec api python -m pytest "src/tests" -p no:warnings
 $ docker-compose exec api flake8 src
 $ docker-compose exec api black src
 $ docker-compose exec api isort src
+
+
+chmod +x entrypoint.sh
+
+python manage.py seed_db

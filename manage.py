@@ -3,7 +3,7 @@
 from flask.cli import FlaskGroup
 
 from src import create_app, db
-from src.api.orders.models import Order
+# from src.api.orders.models import Order
 from src.api.services.models import Service
 
 
@@ -20,7 +20,7 @@ def recreate_db():
 
 @cli.command("seed_db")
 def seed_db():
-    # db.session.add(User(username="michael", email="hermanmu@gmail.com"))
+    db.session.add(Service(name="Lawn Mowing", duration=60))
     db.session.commit()
 
 
