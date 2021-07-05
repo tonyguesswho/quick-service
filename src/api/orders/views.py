@@ -1,6 +1,10 @@
 from flask import Blueprint, request
 from flask_restx import Api, Resource, fields, Namespace, marshal
 from src.api.services.views import service_marshaller
+from .utils import validate_email, validate_order
+
+# from src.api.holiday.models import Holiday
+# import datetime
 
 
 from src.api.orders.crud import get_all_orders, add_order  # isort:skip
@@ -18,17 +22,21 @@ order = orders_namespace.model(
     {
         "id": fields.Integer(readOnly=True),
         "service_id": fields.Integer(required=True),
-        "email": fields.String(required=True, attribute='customer_id'),
+        "email": fields.String(
+            required=True, attribute="customer_id", example="some.user@email"
+        ),
         "created_date": fields.DateTime,
         "updated_date": fields.DateTime,
-        "request_date": fields.DateTime(required=True),
+        "request_date": fields.DateTime(
+            required=True, validate=True, example="2020-12-01T01:59:39.297904Z"
+        ),
         "service": fields.Nested(api.model("Service", service_marshaller)),
     },
 )
 
 
 class OrdersList(Resource):
-    @orders_namespace.marshal_with(order, as_list=True, envelope='data')
+    @orders_namespace.marshal_with(order, as_list=True, envelope="data")
     def get(self):
         """Returns all orders"""
         return get_all_orders(), 200
@@ -44,15 +52,24 @@ class OrdersList(Resource):
         request_date = post_data.get("request_date")
         response_object = {}
 
-        service = get_service_by_id(service_id)
-        if not service:
+        if not validate_email(customer_id):
+            response_object["message"] = "Invalid email"
+            return response_object, 400
+
+        if not get_service_by_id(service_id):
             response_object["message"] = "Service ID is invalid."
+            return response_object, 400
+
+        # Validate Order date/time
+        error, message = validate_order(request_date)
+        if error:
+            response_object["message"] = message
             return response_object, 400
 
         new_order = add_order(service_id, customer_id, request_date)
 
         response_object["message"] = "service request was created successfully!"
-        response_object['data'] = marshal(new_order, order)
+        response_object["data"] = marshal(new_order, order)
         return response_object, 201
 
 

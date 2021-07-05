@@ -27,7 +27,7 @@ service = services_namespace.model(
 
 
 class ServicesList(Resource):
-    @services_namespace.marshal_with(service, as_list=True)
+    @services_namespace.marshal_with(service, as_list=True, envelope="data")
     def get(self):
         """Returns all services"""
         return get_all_services(), 200
