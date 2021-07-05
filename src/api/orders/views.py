@@ -4,7 +4,7 @@ from src.api.services.views import service_marshaller
 from .utils import validate_email, validate_order
 
 # from src.api.holiday.models import Holiday
-# import datetime
+import datetime
 
 
 from src.api.orders.crud import get_all_orders, add_order  # isort:skip
@@ -30,6 +30,7 @@ order = orders_namespace.model(
         "request_date": fields.DateTime(
             required=True, validate=True, example="2020-12-01T01:59:39.297904Z"
         ),
+        "end_date": fields.DateTime(readOnly=True),
         "service": fields.Nested(api.model("Service", service_marshaller)),
     },
 )
@@ -51,22 +52,27 @@ class OrdersList(Resource):
         customer_id = post_data.get("email")
         request_date = post_data.get("request_date")
         response_object = {}
+        order_datetime = datetime.datetime.strptime(
+            request_date.split(".")[0], "%Y-%m-%dT%H:%M:%S"
+        )
 
         if not validate_email(customer_id):
             response_object["message"] = "Invalid email"
             return response_object, 400
 
-        if not get_service_by_id(service_id):
+        service = get_service_by_id(service_id)
+        if not service:
             response_object["message"] = "Service ID is invalid."
             return response_object, 400
 
         # Validate Order date/time
-        error, message = validate_order(request_date)
+        error, message = validate_order(order_datetime)
         if error:
             response_object["message"] = message
             return response_object, 400
 
-        new_order = add_order(service_id, customer_id, request_date)
+        end_date = order_datetime + datetime.timedelta(minutes=service.duration)
+        new_order = add_order(service_id, customer_id, request_date, end_date)
 
         response_object["message"] = "service request was created successfully!"
         response_object["data"] = marshal(new_order, order)

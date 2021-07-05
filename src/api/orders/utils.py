@@ -13,12 +13,10 @@ def validate_email(value):
     return True
 
 
-def validate_order(request_date):
+def validate_order(order_datetime):
 
     datetime_now = datetime.datetime.now()
-    order_datetime = datetime.datetime.strptime(
-        request_date.split(".")[0], "%Y-%m-%dT%H:%M:%S"
-    )
+
 
     # check if datetime is in future
     if datetime_now >= order_datetime:
