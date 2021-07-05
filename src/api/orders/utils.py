@@ -56,7 +56,7 @@ def validate_order(order_datetime, request_date, service):
                         stripped_datetime,
                         "YYYY-MM-DD HH24:MI:SS",
                     )
-                    + func.make_interval(0, 0, 0, 0, 0, math.floor(service.duration)+10),
+                    + func.make_interval(0, 0, 0, 0, 0, math.floor(service.duration)),
                 ),
                 and_(
                     Order.request_date

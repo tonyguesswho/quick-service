@@ -5,7 +5,7 @@ class BaseConfig:
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = "secret"
-    SQLALCHEMY_ECHO = True
+    # SQLALCHEMY_ECHO = True
 
 
 class DevelopmentConfig(BaseConfig):
