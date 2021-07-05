@@ -1,6 +1,11 @@
 import re
 import datetime
 from src.api.holiday.models import Holiday
+from src.api.orders.models import Order
+from sqlalchemy import func, and_, or_
+
+import math
+
 
 EMAIL_REGEX = re.compile(r"\S+@\S+\.\S+")
 
@@ -13,10 +18,9 @@ def validate_email(value):
     return True
 
 
-def validate_order(order_datetime):
+def validate_order(order_datetime, request_date, service):
 
     datetime_now = datetime.datetime.now()
-
 
     # check if datetime is in future
     if datetime_now >= order_datetime:
@@ -36,6 +40,42 @@ def validate_order(order_datetime):
     if is_holiday:
         return True, "Order cannot be placed on a holiday."
 
-    # check if date is free
+    stripped_datetime = re.sub("T", " ", request_date)
+
+    is_booked = (
+        Order.query.filter(
+            or_(
+                and_(
+                    Order.request_date
+                    >= func.TO_TIMESTAMP(
+                        stripped_datetime,
+                        "YYYY-MM-DD HH24:MI:SS",
+                    ),
+                    Order.request_date
+                    < func.TO_TIMESTAMP(
+                        stripped_datetime,
+                        "YYYY-MM-DD HH24:MI:SS",
+                    )
+                    + func.make_interval(0, 0, 0, 0, 0, math.floor(service.duration)+10),
+                ),
+                and_(
+                    Order.request_date
+                    < func.TO_TIMESTAMP(
+                        stripped_datetime,
+                        "YYYY-MM-DD HH24:MI:SS",
+                    ),
+                    Order.end_date
+                    > func.TO_TIMESTAMP(
+                        stripped_datetime,
+                        "YYYY-MM-DD HH24:MI:SS",
+                    ),
+                ),
+            )
+        )
+        .limit(1)
+        .one_or_none()
+    )
+    if is_booked:
+        return True, "Slot is not available"
 
     return False, "Slot is available"

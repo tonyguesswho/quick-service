@@ -66,7 +66,7 @@ class OrdersList(Resource):
             return response_object, 400
 
         # Validate Order date/time
-        error, message = validate_order(order_datetime)
+        error, message = validate_order(order_datetime, request_date, service)
         if error:
             response_object["message"] = message
             return response_object, 400
