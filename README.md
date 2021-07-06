@@ -8,8 +8,6 @@ The **fquick-service app** is an application that allows customers to create ser
 
 
 - Key Application features
-
-- Key Application features
     - Creating a service request order
     - Listing all orders
     - Search service requests by service id
@@ -120,16 +118,16 @@ To stop the running containers run the command `docker-compose down`
   <tr>
     <td>GET</td>
     <td>/services/</td>
-    <td>Get all services/td>
+    <td>Get all services</td>
   </tr>
   <tr>
     <td>GET</td>
-    <td>/users?service_id=1</td>
+    <td>/orders?service_id=1</td>
     <td>Search orders by service id</td>
   </tr>
  <tr>
     <td>GET</td>
-    <td>/users?start_date=2000-11-10T09:10:21.524485Z&end_date=2041-11-10T09:10:21.524485Z</td>
+    <td>/orders?start_date=2000-11-10T09:10:21.524485Z&end_date=2041-11-10T09:10:21.524485Z</td>
     <td>Search orders by date range</td>
   </tr>
 </table>
