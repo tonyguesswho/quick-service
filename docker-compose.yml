@@ -10,7 +10,7 @@ services:
     volumes:
       - '.:/usr/src/app'
     ports:
-      - 5004:5000
+      - 5000:5000
     environment:
       - FLASK_ENV=development
       - DATABASE_URL=postgresql://postgres:postgres@api-db:5432/db_dev
@@ -38,3 +38,20 @@ services:
      - "5050:80"
    depends_on:
      - api-db
+
+
+  client:
+    container_name: react-app
+    build:
+      context: ./src/client
+      dockerfile: Dockerfile
+    volumes:
+      - './src/client:/usr/src/app'
+      - '/usr/src/app/node_modules'
+    ports:
+      - '3000:3000'
+    depends_on:
+      - api
+    environment:
+      - NODE_ENV=development
+      - HOST_URL=http://127.0.0.1:5000
