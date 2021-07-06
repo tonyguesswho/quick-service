@@ -151,3 +151,27 @@ def test_add_order_invalid_slot(test_app, test_database, add_service):
     assert data_1["data"]["service_id"] == service.id
     assert resp_2.status_code == 400
     assert "Slot is not available" in data_2["message"]
+
+
+def test_get_orders_by_service_id(test_app, test_database, add_service):
+    service = add_service(name="House Cleaning", duration=60)
+    client = test_app.test_client()
+    post_resp = client.post(
+        "/orders",
+        data=json.dumps(
+            {
+                "email": "test@test.com",
+                "service_id": service.id,
+                "request_date": "2090-11-10T09:10:21.524485Z",
+            }
+        ),
+        content_type="application/json",
+    )
+    get_resp = client.get(
+        "/orders?service_id=1",
+    )
+    data = json.loads(get_resp.data.decode())
+    assert post_resp.status_code == 201
+    assert get_resp.status_code == 200
+    assert len(data["data"]) == 1
+    assert data["data"][0]['service_id'] == service.id

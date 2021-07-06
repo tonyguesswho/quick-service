@@ -40,7 +40,10 @@ class OrdersList(Resource):
     @orders_namespace.marshal_with(order, as_list=True, envelope="data")
     def get(self):
         """Returns all orders"""
-        return get_all_orders(), 200
+        service_id = request.args.get("service_id")
+        start_date = request.args.get("start_date")
+        end_date = request.args.get("end_date")
+        return get_all_orders(service_id, start_date, end_date), 200
 
     @orders_namespace.expect(order, validate=True)
     @orders_namespace.response(201, "service request was created")

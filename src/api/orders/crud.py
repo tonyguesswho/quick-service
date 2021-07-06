@@ -1,8 +1,30 @@
 from src.api.orders.models import Order
+from sqlalchemy import func, and_
+import re
 
 
-def get_all_orders():
-    return Order.query.all()
+def get_all_orders(service_id, start_date, end_date):
+    q = Order.query
+    if service_id:
+        q = q.filter_by(service_id=service_id)
+    if start_date and end_date:
+        stripped_start_date = re.sub("T", " ", start_date)
+        stripped_end_date = re.sub("T", " ", end_date)
+        q = q.filter(
+            and_(
+                Order.request_date
+                >= func.TO_TIMESTAMP(
+                    stripped_start_date,
+                    "YYYY-MM-DD HH24:MI:SS",
+                ),
+                Order.request_date
+                < func.TO_TIMESTAMP(
+                    stripped_end_date,
+                    "YYYY-MM-DD HH24:MI:SS",
+                ),
+            )
+        )
+    return q.all()
 
 
 def add_order(service_id, customer_id, request_date, end_date):
