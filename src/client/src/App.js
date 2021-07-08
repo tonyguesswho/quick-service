@@ -3,6 +3,7 @@ import Header from './components/Header'
 import Orders from './components/Orders'
 import Services from './components/Services'
 import OrderRequest from './pages/OrderRequests'
+import Calendar from './pages/Calendar'
 import { CssBaseline, makeStyles, ThemeProvider, createTheme } from "@material-ui/core"
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
@@ -58,6 +59,9 @@ const App = () => {
             </Route>
             <Route exact path="/new" >
               <OrderRequest />
+            </Route>
+            <Route exact path="/calendar" >
+              <Calendar />
             </Route>
 
           </Switch>

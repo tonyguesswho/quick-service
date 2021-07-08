@@ -23,7 +23,9 @@ const Header = () => {
 							</NavLink>
 						</Grid>
 						<Grid item >
-							<Button color="inherit">Calender</Button>
+							<NavLink to="/calendar">
+								<Button color="inherit">Calender</Button>
+							</NavLink>
 						</Grid>
 						<Grid item sm></Grid>
 						<Grid item >
@@ -38,7 +40,6 @@ const Header = () => {
 							</NavLink>
 						</Grid>
 					</Grid>
-					{/* <Button color="inherit">Requests</Button> */}
 				</Toolbar>
 			</AppBar>
 
