@@ -16,7 +16,7 @@ const Services = () => {
 	const [services, setServices] = useState([])
 
 	const getServices = async () => {
-		let response = await axios.get('/services')
+		let response = await axios.get('http://localhost:5000/services')
 		setServices(response.data.data)
 	}
 

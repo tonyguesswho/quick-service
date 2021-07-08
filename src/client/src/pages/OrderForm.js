@@ -96,7 +96,7 @@ function OrderForm() {
 									margin="normal"
 									id="date-picker-dialog"
 									label="Select Date and Time"
-									format="yyyy-MM-ddTHH:mm:ss.sss"
+									format="yyyy-MM-dd HH:mm:ss"
 									name="date"
 									value={selectedDate}
 									onChange={handleDateChange}

@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin
 
 from .config import config_by_name
+from flask_cors import CORS
 
 # instantiate the db
 db = SQLAlchemy()
@@ -16,6 +17,8 @@ def create_app(script_info=None):
 
     # instantiate the app
     app = Flask(__name__)
+
+    CORS(app)
 
     # set config
     ENV = os.getenv("FLASK_ENV", "development")
