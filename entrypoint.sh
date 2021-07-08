@@ -8,8 +8,8 @@ done
 
 echo "PostgreSQL started"
 
-# python -m pytest "src/tests"
-# python manage.py recreate_db
+python -m pytest "src/tests"
+python manage.py recreate_db
 # python manage.py seed_db
 # flake8 src
 # black src --check

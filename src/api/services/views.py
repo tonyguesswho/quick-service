@@ -2,9 +2,7 @@ from flask import Blueprint
 from flask_restx import Api, Resource, fields, Namespace
 
 
-from src.api.services.crud import (  # isort:skip
-    get_all_services, get_service_by_id
-)
+from src.api.services.crud import get_all_services, get_service_by_id  # isort:skip
 
 services_blueprint = Blueprint("services", __name__)
 api = Api(services_blueprint)
@@ -30,7 +28,10 @@ class ServicesList(Resource):
     @services_namespace.marshal_with(service, as_list=True, envelope="data")
     def get(self):
         """Returns all services"""
-        return get_all_services(), 200
+        try:
+            return get_all_services(), 200
+        except Exception:
+            services_namespace.abort(400, "An error occured")
 
 
 class Services(Resource):
@@ -42,7 +43,10 @@ class Services(Resource):
         returned_service = get_service_by_id(service_id)
         if not returned_service:
             services_namespace.abort(404, f"Service {service_id} does not exist")
-        return returned_service, 200
+        try:
+            return returned_service, 200
+        except Exception:
+            services_namespace.abort(400, "An error occured")
 
 
 services_namespace.add_resource(ServicesList, "")

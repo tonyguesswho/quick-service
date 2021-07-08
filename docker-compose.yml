@@ -40,18 +40,18 @@ services:
      - api-db
 
 
-  client:
-    container_name: react-app
-    build:
-      context: ./src/client
-      dockerfile: Dockerfile
-    volumes:
-      - './src/client:/usr/src/app'
-      - '/usr/src/app/node_modules'
-    ports:
-      - '3000:3000'
-    depends_on:
-      - api
-    environment:
-      - NODE_ENV=development
-      - HOST_URL=http://127.0.0.1:5000
+  # client:
+  #   container_name: react-app
+  #   build:
+  #     context: ./src/client
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - './src/client:/usr/src/app'
+  #     - '/usr/src/app/node_modules'
+  #   ports:
+  #     - '3000:3000'
+  #   depends_on:
+  #     - api
+  #   environment:
+  #     - NODE_ENV=development
+  #     - HOST_URL=http://127.0.0.1:5000

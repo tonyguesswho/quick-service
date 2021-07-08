@@ -7,7 +7,7 @@ from .utils import validate_email, validate_order
 import datetime
 
 
-from src.api.orders.crud import get_all_orders, add_order  # isort:skip
+from src.api.orders.crud import get_all_orders, add_order, get_order_by_id, delete_order
 
 from src.api.services.crud import get_service_by_id  # isort:skip
 
@@ -43,7 +43,10 @@ class OrdersList(Resource):
         service_id = request.args.get("service_id")
         start_date = request.args.get("start_date")
         end_date = request.args.get("end_date")
-        return get_all_orders(service_id, start_date, end_date), 200
+        try:
+            return get_all_orders(service_id, start_date, end_date), 200
+        except Exception:
+            orders_namespace.abort(400, "An error occured")
 
     @orders_namespace.expect(order, validate=True)
     @orders_namespace.response(201, "service request was created")
@@ -75,11 +78,46 @@ class OrdersList(Resource):
             return response_object, 400
 
         end_date = order_datetime + datetime.timedelta(minutes=service.duration)
-        new_order = add_order(service_id, customer_id, request_date, end_date)
+        try:
+            new_order = add_order(service_id, customer_id, request_date, end_date)
+        except Exception:
+            orders_namespace.abort(400, "An error occured")
 
         response_object["message"] = "service request was created successfully!"
         response_object["data"] = marshal(new_order, order)
         return response_object, 201
 
 
+class Orders(Resource):
+    @orders_namespace.marshal_with(order)
+    @orders_namespace.response(200, "Success")
+    @orders_namespace.response(404, "Order <order_id> does not exist")
+    def get(self, order_id):
+        """Returns a single user."""
+        returned_order = get_order_by_id(order_id)
+        if not returned_order:
+            orders_namespace.abort(404, f"Order {order_id} does not exist")
+        try:
+            return returned_order, 200
+        except Exception:
+            orders_namespace.abort(400, "An error occured")
+
+    @orders_namespace.response(200, "<order_id> was removed!")  # new
+    @orders_namespace.response(404, "Order <order_id> does not exist")  # new
+    def delete(self, order_id):
+        """ "Deletes an order."""  # new
+        response_object = {}
+        order = get_order_by_id(order_id)
+        if not order:
+            orders_namespace.abort(404, f"User {order_id} does not exist")
+        try:
+            delete_order(order)
+        except Exception:
+            orders_namespace.abort(400, "An error occured")
+
+        response_object["message"] = "order was removed!"
+        return response_object, 200
+
+
 orders_namespace.add_resource(OrdersList, "")
+orders_namespace.add_resource(Orders, "/<int:order_id>")

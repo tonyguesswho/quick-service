@@ -1,6 +1,7 @@
 from src.api.orders.models import Order
 from sqlalchemy import func, and_
 import re
+from src import db
 
 
 def get_all_orders(service_id, start_date, end_date):
@@ -36,3 +37,13 @@ def add_order(service_id, customer_id, request_date, end_date):
     )
     order.save()
     return order
+
+
+def delete_order(order):
+    db.session.delete(order)
+    db.session.commit()
+    return order
+
+
+def get_order_by_id(order_id):
+    return Order.query.filter_by(id=order_id).first()
