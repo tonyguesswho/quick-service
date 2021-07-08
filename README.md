@@ -28,7 +28,7 @@ The **fquick-service app** is an application that allows customers to create ser
 - Docker
 - Pytest
 
-## Set Up Development With Docker(Recommended)- Backend
+## Set Up Development Backend and frontennd With Docker(Recommended)- 
 
 To setup for development with Docker after cloning the repository please do/run the following commands in the order stated below:
 
@@ -53,6 +53,10 @@ ADMIN ROUTE `http://127.0.0.1:5000/admin`
 
 
 SWAGGER DOCS ROUTE `http://127.0.0.1:5000/`
+
+
+
+UI URL `http://127.0.0.1:3000/`
 
 
 To stop the running containers run the command `docker-compose down`
@@ -94,7 +98,7 @@ To stop the running containers run the command `docker-compose down`
 - Run the server with `python manage.py run`
 
 
-
+To start Frontend locally cd into src/client and run `yarn start`
 
 
 
@@ -132,27 +136,3 @@ To stop the running containers run the command `docker-compose down`
   </tr>
 </table>
 
-
-
-FROM node:16-alpine
-
-# set working directory
-WORKDIR /usr/src/app
-
-# add `/usr/src/app/node_modules/.bin` to $PATH
-ENV PATH /usr/src/app/node_modules/.bin:$PATH
-
-# install and cache app dependencies
-COPY ./package.json .
-COPY ./yarn.lock .
-COPY ./src .
-COPY ./public .
-RUN yarn install
-
-CMD ["yarn", "start"]
-
-
-
-/////
-
-node_modules
